@@ -1,90 +1,84 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { AdCard } from "@/components/ads/ad-card"
-// import { AdFilters } from "@/components/ads/ad-filters"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Ad, AdFilter, Platform, AdFormat } from "@/types"
 import { Download, Grid, List } from "lucide-react"
+import Image from "next/image"
+
+interface SimpleAd {
+  id: string
+  competitorName: string
+  platform: string
+  creativeUrl: string
+  dateFound: string
+  estimatedReach: number
+  format: string
+  isActive: boolean
+}
 
 export default function AdsPage() {
-  const [ads, setAds] = useState<Ad[]>([])
-  const [filteredAds, setFilteredAds] = useState<Ad[]>([])
-  const [filters, setFilters] = useState<AdFilter>({})
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
+  const [ads, setAds] = useState<SimpleAd[]>([])
   const [loading, setLoading] = useState(true)
-  const [bookmarkedAds, setBookmarkedAds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     const fetchAds = async () => {
       try {
-        // TODO: Replace with actual API call
-        // Simulated data for now
-        const mockAds: Ad[] = [
+        const mockAds: SimpleAd[] = [
           {
             id: "1",
-            competitorId: "caesars",
             competitorName: "Caesars Palace",
-            platform: "meta" as Platform,
+            platform: "meta",
             creativeUrl: "https://via.placeholder.com/400x300?text=Caesars+Meta+Ad",
-            text: "Transform your business with our cutting-edge AI solutions.",
-            dateFound: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+            dateFound: "2 hours ago",
             estimatedReach: 15000,
-            format: "image" as AdFormat,
+            format: "image",
             isActive: true
           },
           {
             id: "2",
-            competitorId: "draftkings",
             competitorName: "DraftKings",
-            platform: "twitter" as Platform,
+            platform: "twitter",
             creativeUrl: "https://via.placeholder.com/400x300?text=DraftKings+Twitter+Ad",
-            text: "Limited time offer: Get 3 months free when you sign up for our premium plan.",
-            dateFound: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+            dateFound: "4 hours ago",
             estimatedReach: 8500,
-            format: "image" as AdFormat,
+            format: "image",
             isActive: true
           },
           {
             id: "3",
-            competitorId: "fanduel",
             competitorName: "FanDuel",
-            platform: "snapchat" as Platform,
+            platform: "snapchat",
             creativeUrl: "https://via.placeholder.com/400x600?text=FanDuel+Snapchat+Ad",
-            text: "Ready to level up? Our new app feature makes everything easier.",
-            dateFound: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+            dateFound: "6 hours ago",
             estimatedReach: 12000,
-            format: "video" as AdFormat,
+            format: "video",
             isActive: true
           },
           {
             id: "4",
-            competitorId: "betmgm",
             competitorName: "BetMGM",
-            platform: "meta" as Platform,
+            platform: "meta",
             creativeUrl: "https://via.placeholder.com/800x400?text=BetMGM+Meta+Carousel",
-            text: "Black Friday Sale! Up to 70% off all products.",
-            dateFound: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+            dateFound: "8 hours ago",
             estimatedReach: 25000,
-            format: "carousel" as AdFormat,
+            format: "carousel",
             isActive: false
           },
           {
             id: "5",
-            competitorId: "nike",
             competitorName: "Nike",
-            platform: "google_search" as Platform,
+            platform: "google_search",
             creativeUrl: "https://via.placeholder.com/400x200?text=Nike+Google+Ad",
-            text: "Professional services you can trust. 20+ years of experience.",
-            dateFound: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+            dateFound: "12 hours ago",
             estimatedReach: 18000,
-            format: "text" as AdFormat,
+            format: "text",
             isActive: true
           }
         ]
         
         setAds(mockAds)
-        setFilteredAds(mockAds)
       } catch (error) {
         console.error("Failed to fetch ads:", error)
       } finally {
@@ -95,52 +89,19 @@ export default function AdsPage() {
     fetchAds()
   }, [])
 
-  useEffect(() => {
-    let filtered = [...ads]
-
-    if (filters.competitor) {
-      filtered = filtered.filter(ad =>
-        ad.competitorId.toLowerCase().includes(filters.competitor!.toLowerCase())
-      )
+  const getPlatformColor = (platform: string) => {
+    switch (platform) {
+      case "meta":
+        return "bg-blue-100 text-blue-800"
+      case "twitter":
+        return "bg-sky-100 text-sky-800"
+      case "snapchat":
+        return "bg-yellow-100 text-yellow-800"
+      case "google_search":
+        return "bg-green-100 text-green-800"
+      default:
+        return "bg-gray-100 text-gray-800"
     }
-
-    if (filters.platform) {
-      filtered = filtered.filter(ad => ad.platform === filters.platform)
-    }
-
-    if (filters.format) {
-      filtered = filtered.filter(ad => ad.format === filters.format)
-    }
-
-    if (filters.isActive !== undefined) {
-      filtered = filtered.filter(ad => ad.isActive === filters.isActive)
-    }
-
-    if (filters.dateRange) {
-      filtered = filtered.filter(ad => {
-        const adDate = new Date(ad.dateFound)
-        return adDate >= filters.dateRange!.start && adDate <= filters.dateRange!.end
-      })
-    }
-
-    setFilteredAds(filtered)
-  }, [ads, filters])
-
-  const handleBookmark = (adId: string) => {
-    setBookmarkedAds(prev => {
-      const newSet = new Set(prev)
-      if (newSet.has(adId)) {
-        newSet.delete(adId)
-      } else {
-        newSet.add(adId)
-      }
-      return newSet
-    })
-  }
-
-  const handleExport = () => {
-    // TODO: Implement CSV export
-    console.log("Exporting ads to CSV...")
   }
 
   if (loading) {
@@ -168,67 +129,60 @@ export default function AdsPage() {
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <Button variant="outline" onClick={handleExport}>
+          <Button variant="outline">
             <Download className="mr-2 h-4 w-4" />
             Export
           </Button>
           <div className="flex rounded-lg border">
-            <Button
-              variant={viewMode === "grid" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setViewMode("grid")}
-              className="rounded-r-none"
-            >
+            <Button variant="default" size="sm" className="rounded-r-none">
               <Grid className="h-4 w-4" />
             </Button>
-            <Button
-              variant={viewMode === "list" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setViewMode("list")}
-              className="rounded-l-none"
-            >
+            <Button variant="ghost" size="sm" className="rounded-l-none">
               <List className="h-4 w-4" />
             </Button>
           </div>
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-4">
-        <div className="lg:col-span-1">
-          {/* Filters temporarily disabled for debugging */}
-          <div className="text-sm text-muted-foreground">
-            Filters coming soon...
-          </div>
-        </div>
+      <div className="mb-4 flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          Showing {ads.length} ads
+        </p>
+      </div>
 
-        <div className="lg:col-span-3">
-          <div className="mb-4 flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              Showing {filteredAds.length} of {ads.length} ads
-            </p>
-          </div>
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {ads.map((ad) => (
+          <Card key={ad.id} className="flex flex-col h-full">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <Badge className={getPlatformColor(ad.platform)}>
+                  {ad.platform}
+                </Badge>
+                <span className="text-xs text-muted-foreground">
+                  {ad.competitorName}
+                </span>
+              </div>
+            </CardHeader>
 
-          {filteredAds.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">No ads found matching your filters</p>
-            </div>
-          ) : (
-            <div className={
-              viewMode === "grid"
-                ? "grid gap-4 md:grid-cols-2 xl:grid-cols-3"
-                : "space-y-4"
-            }>
-              {filteredAds.map((ad) => (
-                <AdCard
-                  key={ad.id}
-                  ad={ad}
-                  onBookmark={handleBookmark}
-                  isBookmarked={bookmarkedAds.has(ad.id)}
+            <CardContent className="flex-1">
+              <div className="relative aspect-video mb-4 bg-muted rounded-lg overflow-hidden">
+                <Image
+                  src={ad.creativeUrl}
+                  alt="Ad creative"
+                  fill
+                  className="object-cover"
                 />
-              ))}
-            </div>
-          )}
-        </div>
+              </div>
+
+              <div className="space-y-2 text-xs text-muted-foreground">
+                <div>Found {ad.dateFound}</div>
+                <div>Estimated reach: {ad.estimatedReach.toLocaleString()}</div>
+                <div>Format: {ad.format}</div>
+                <div>Status: {ad.isActive ? "Active" : "Inactive"}</div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   )
