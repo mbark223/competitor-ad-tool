@@ -26,12 +26,14 @@ export interface SearchResult {
   keyword: string;
   state: USState;
   date: Date;
-  competitorRankings: CompetitorRanking[];
+  rankings: CompetitorRanking[];
   serpScreenshot?: string;
 }
 
 export interface CompetitorRanking {
+  id: string;
   competitorId: string;
+  searchResultId: string;
   position: number;
   adCopy?: string;
   url: string;

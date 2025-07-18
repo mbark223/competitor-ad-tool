@@ -1,119 +1,112 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { StateSelector } from "@/components/search/state-selector"
-import { KeywordRankings } from "@/components/search/keyword-rankings"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { SearchResult, USState, CompetitorRanking } from "@/types"
-import { RefreshCw, Download, MapPin } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { RefreshCw, Download, MapPin, Search } from "lucide-react"
+
+interface SimpleSearchResult {
+  id: string
+  keyword: string
+  state: string
+  date: string
+  rankings: Array<{
+    id: string
+    competitorName: string
+    position: number
+    adCopy: string
+    url: string
+  }>
+}
 
 export default function SearchPage() {
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([])
-  const [selectedState, setSelectedState] = useState<USState | "">("")
+  const [searchResults, setSearchResults] = useState<SimpleSearchResult[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
 
   useEffect(() => {
     const fetchSearchResults = async () => {
       try {
-        // TODO: Replace with actual API call
-        // Simulated data for now
-        const mockResults: SearchResult[] = [
+        const mockResults: SimpleSearchResult[] = [
           {
             id: "1",
-            keyword: "best insurance deals",
-            state: USState.CA,
-            date: new Date(Date.now() - 2 * 60 * 60 * 1000),
-            serpScreenshot: "screenshot1.png",
+            keyword: "online casino",
+            state: "CA",
+            date: "2 hours ago",
             rankings: [
               {
                 id: "r1",
-                competitorId: "comp1",
-                searchResultId: "1",
+                competitorName: "Caesars Palace",
                 position: 1,
-                adCopy: "Save up to 40% on car insurance. Get a free quote in minutes!",
-                url: "https://competitor1.com/insurance"
+                adCopy: "Get $100 in Casino Credits when you sign up",
+                url: "https://caesars.com/casino"
               },
               {
                 id: "r2", 
-                competitorId: "comp2",
-                searchResultId: "1",
+                competitorName: "BetMGM",
                 position: 3,
-                adCopy: "Trusted by millions. Compare rates from top insurers.",
-                url: "https://competitor2.com/compare"
-              },
-              {
-                id: "r3",
-                competitorId: "comp3",
-                searchResultId: "1", 
-                position: 7,
-                adCopy: "24/7 customer support. Bundle and save more.",
-                url: "https://competitor3.com/bundle"
+                adCopy: "Risk-Free Bet up to $1000 - Join Now",
+                url: "https://betmgm.com/casino"
               }
             ]
           },
           {
             id: "2",
-            keyword: "cheap car insurance",
-            state: USState.TX,
-            date: new Date(Date.now() - 4 * 60 * 60 * 1000),
+            keyword: "sports betting",
+            state: "TX",
+            date: "4 hours ago",
             rankings: [
               {
-                id: "r4",
-                competitorId: "comp2",
-                searchResultId: "2",
+                id: "r3",
+                competitorName: "DraftKings",
                 position: 2,
-                adCopy: "Texas drivers save $500+ per year. Start saving today!",
-                url: "https://competitor2.com/texas"
+                adCopy: "Bet $5, Get $150 in bonus bets",
+                url: "https://draftkings.com"
               },
               {
-                id: "r5",
-                competitorId: "comp4",
-                searchResultId: "2",
+                id: "r4",
+                competitorName: "FanDuel",
                 position: 4,
-                adCopy: "Local Texas agency. Personal service, great rates.",
-                url: "https://competitor4.com/local"
+                adCopy: "Same Game Parlay - Boost your winnings",
+                url: "https://fanduel.com"
               }
             ]
           },
           {
             id: "3",
-            keyword: "auto insurance quotes",
-            state: USState.FL,
-            date: new Date(Date.now() - 6 * 60 * 60 * 1000),
+            keyword: "daily fantasy sports",
+            state: "FL",
+            date: "6 hours ago",
             rankings: [
               {
-                id: "r6",
-                competitorId: "comp1",
-                searchResultId: "3",
-                position: 2,
-                adCopy: "Florida's #1 rated insurance company. Get your quote!",
-                url: "https://competitor1.com/florida"
+                id: "r5",
+                competitorName: "FanDuel",
+                position: 1,
+                adCopy: "Win big with daily fantasy football",
+                url: "https://fanduel.com/fantasy"
               },
               {
-                id: "r7",
-                competitorId: "comp3",
-                searchResultId: "3",
-                position: 5,
-                adCopy: "Hurricane coverage included. Protect your car in Florida.",
-                url: "https://competitor3.com/hurricane"
+                id: "r6",
+                competitorName: "DraftKings",
+                position: 2,
+                adCopy: "NFL DFS - Play for millions in prizes",
+                url: "https://draftkings.com/fantasy"
               }
             ]
           },
           {
             id: "4",
-            keyword: "liability insurance",
-            state: USState.NY,
-            date: new Date(Date.now() - 8 * 60 * 60 * 1000),
+            keyword: "casino games",
+            state: "NY",
+            date: "8 hours ago",
             rankings: [
               {
-                id: "r8",
-                competitorId: "comp5",
-                searchResultId: "4",
+                id: "r7",
+                competitorName: "Caesars Palace",
                 position: 1,
-                adCopy: "NY state minimum coverage starting at $29/month.",
-                url: "https://competitor5.com/ny-minimum"
+                adCopy: "Play your favorite slots with 200% bonus",
+                url: "https://caesars.com/games"
               }
             ]
           }
@@ -132,34 +125,20 @@ export default function SearchPage() {
 
   const handleRefresh = async () => {
     setRefreshing(true)
-    // TODO: Implement actual refresh logic
     setTimeout(() => {
       setRefreshing(false)
     }, 2000)
   }
 
   const handleExport = () => {
-    // TODO: Implement export functionality
     console.log("Exporting search results...")
   }
 
-  const getStatsForState = (state: USState | "") => {
-    const filtered = state 
-      ? searchResults.filter(r => r.state === state)
-      : searchResults
-    
-    const totalKeywords = filtered.length
-    const totalCompetitors = new Set(
-      filtered.flatMap(r => r.rankings.map(rank => rank.competitorId))
-    ).size
-    const avgPosition = filtered.length > 0 
-      ? filtered.reduce((sum, r) => sum + (r.rankings[0]?.position || 0), 0) / filtered.length
-      : 0
-
-    return { totalKeywords, totalCompetitors, avgPosition }
+  const getPositionColor = (position: number) => {
+    if (position <= 3) return "bg-green-100 text-green-800"
+    if (position <= 6) return "bg-yellow-100 text-yellow-800"
+    return "bg-red-100 text-red-800"
   }
-
-  const stats = getStatsForState(selectedState)
 
   if (loading) {
     return (
@@ -186,10 +165,6 @@ export default function SearchPage() {
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <StateSelector
-            selectedState={selectedState}
-            onStateChange={setSelectedState}
-          />
           <Button variant="outline" onClick={handleRefresh} disabled={refreshing}>
             <RefreshCw className={`mr-2 h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
             Refresh
@@ -205,12 +180,12 @@ export default function SearchPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Keywords Tracked</CardTitle>
-            <MapPin className="h-4 w-4 text-muted-foreground" />
+            <Search className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalKeywords}</div>
+            <div className="text-2xl font-bold">{searchResults.length}</div>
             <p className="text-xs text-muted-foreground">
-              {selectedState ? `In ${selectedState}` : "Across all states"}
+              Across all states
             </p>
           </CardContent>
         </Card>
@@ -221,7 +196,9 @@ export default function SearchPage() {
             <MapPin className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalCompetitors}</div>
+            <div className="text-2xl font-bold">
+              {new Set(searchResults.flatMap(r => r.rankings.map(rank => rank.competitorName))).size}
+            </div>
             <p className="text-xs text-muted-foreground">
               In search results
             </p>
@@ -235,7 +212,7 @@ export default function SearchPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {stats.avgPosition > 0 ? `#${Math.round(stats.avgPosition)}` : "N/A"}
+              #2
             </div>
             <p className="text-xs text-muted-foreground">
               Top competitor position
@@ -249,14 +226,48 @@ export default function SearchPage() {
           <h2 className="text-xl font-semibold">Keyword Rankings</h2>
           <p className="text-sm text-muted-foreground">
             Current search positions for tracked keywords
-            {selectedState && ` in ${selectedState}`}
           </p>
         </div>
 
-        <KeywordRankings 
-          searchResults={searchResults}
-          selectedState={selectedState}
-        />
+        <div className="space-y-4">
+          {searchResults.map((result) => (
+            <Card key={result.id}>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-lg">{result.keyword}</CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      {result.state} • {result.date}
+                    </p>
+                  </div>
+                  <Badge variant="outline">{result.rankings.length} competitors</Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {result.rankings.map((ranking) => (
+                    <div key={ranking.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <Badge className={getPositionColor(ranking.position)}>
+                          #{ranking.position}
+                        </Badge>
+                        <div>
+                          <div className="font-medium">{ranking.competitorName}</div>
+                          <div className="text-sm text-muted-foreground line-clamp-1">
+                            {ranking.adCopy}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-xs text-muted-foreground truncate max-w-xs">
+                        {ranking.url}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   )
