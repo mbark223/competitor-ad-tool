@@ -123,6 +123,54 @@ export class MetaAdLibraryAPI {
     }
   }
 
+  async getAdsByPageId(pageId: string, limit = 50): Promise<Ad[]> {
+    if (!this.accessToken) {
+      throw new Error("META_ACCESS_TOKEN not configured")
+    }
+
+    const searchParams = new URLSearchParams({
+      access_token: this.accessToken,
+      ad_reached_countries: "US",
+      ad_active_status: "ACTIVE",
+      ad_type: "ALL_ADS",
+      limit: limit.toString(),
+      search_page_ids: pageId,
+      fields: [
+        "id",
+        "ad_creation_time", 
+        "ad_creative_bodies",
+        "ad_creative_link_captions",
+        "ad_creative_link_titles",
+        "ad_delivery_start_time",
+        "ad_delivery_stop_time",
+        "ad_snapshot_url",
+        "currency",
+        "demographic_distribution",
+        "impressions",
+        "languages",
+        "page_id",
+        "page_name",
+        "publisher_platforms",
+        "spend"
+      ].join(",")
+    })
+
+    try {
+      const response = await fetch(`${this.baseUrl}?${searchParams}`)
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null)
+        throw new Error(`Meta API error: ${response.status} ${response.statusText}${errorData ? ` - ${JSON.stringify(errorData)}` : ""}`)
+      }
+
+      const data = await response.json()
+      return this.convertMetaAdsToAds(data.data, `page_${pageId}`)
+    } catch (error) {
+      console.error(`Failed to fetch ads for page ID ${pageId}:`, error)
+      return []
+    }
+  }
+
   private convertMetaAdsToAds(metaAds: MetaAd[], competitorName: string): Ad[] {
     return metaAds.map(metaAd => {
       const adText = this.extractAdText(metaAd)

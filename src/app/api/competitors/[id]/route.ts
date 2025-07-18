@@ -146,13 +146,40 @@ export async function GET(
       ]
     }
 
+    // Try to fetch real Meta ads first
+    let realMetaAds: any[] = []
+    try {
+      const metaResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/meta-ads/${id}`)
+      if (metaResponse.ok) {
+        const metaData = await metaResponse.json()
+        if (metaData.success && metaData.data) {
+          realMetaAds = metaData.data.map((ad: any) => ({
+            id: ad.id,
+            competitorId: id,
+            platform: "meta",
+            text: ad.text,
+            imageUrl: ad.creativeUrl || ad.ad_snapshot_url,
+            dateFound: ad.dateFound || ad.ad_creation_time,
+            estimatedReach: ad.estimatedReach,
+            format: ad.format,
+            isActive: ad.isActive
+          }))
+        }
+      }
+    } catch (error) {
+      console.warn("Failed to fetch real Meta ads, using fallback:", error)
+    }
+
     const creatives = realAdCreatives[id as keyof typeof realAdCreatives] || []
     
-    // Generate ads using real creatives
-    const mockAds = Array.from({ length: Math.max(12, creatives.length) }, (_, i) => {
+    // Combine real Meta ads with fallback creatives
+    const allAds = [...realMetaAds]
+    
+    // Add fallback creatives for other platforms or if Meta ads are insufficient
+    const additionalAds = Array.from({ length: Math.max(12 - realMetaAds.length, creatives.length) }, (_, i) => {
       const creative = creatives[i % creatives.length]
       return {
-        id: `ad-${id}-${i}`,
+        id: `ad-${id}-${i + realMetaAds.length}`,
         competitorId: id,
         platform: competitor.platforms[i % competitor.platforms.length],
         text: creative?.text || "",
@@ -163,6 +190,8 @@ export async function GET(
         isActive: Math.random() > 0.2
       }
     })
+    
+    const mockAds = [...allAds, ...additionalAds]
 
     // Generate platform stats
     const platformStats = competitor.platforms.map((platform: string) => ({
