@@ -120,20 +120,18 @@ export function PlatformActivity({ ads, platformStats }: PlatformActivityProps) 
                 {platformAds.slice(0, 10).map((ad) => (
                   <div key={ad.id} className="border rounded-lg p-4">
                     <div className="flex items-start space-x-4">
-                      {ad.creativeUrl && (
-                        <div className="relative w-20 h-20 bg-muted rounded-lg overflow-hidden flex-shrink-0">
-                          <Image
-                            src={ad.creativeUrl}
-                            alt="Ad creative"
-                            fill
-                            className="object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement
-                              target.style.display = "none"
-                            }}
-                          />
-                        </div>
-                      )}
+                      <div className="relative w-32 h-24 bg-muted rounded-lg overflow-hidden flex-shrink-0">
+                        <Image
+                          src={ad.imageUrl || `https://picsum.photos/200/150?random=${ad.id}`}
+                          alt="Ad creative"
+                          fill
+                          className="object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement
+                            target.src = `https://placehold.co/200x150/cccccc/666666?text=Ad+${ad.id}`
+                          }}
+                        />
+                      </div>
                       
                       <div className="flex-1 space-y-2">
                         <div className="flex items-center justify-between">
@@ -148,7 +146,7 @@ export function PlatformActivity({ ads, platformStats }: PlatformActivityProps) 
                           </div>
                           <div className="flex items-center text-sm text-muted-foreground">
                             <Calendar className="mr-1 h-3 w-3" />
-                            {formatDistanceToNow(ad.dateFound, { addSuffix: true })}
+                            {new Date(ad.dateFound).toLocaleDateString()}
                           </div>
                         </div>
                         
