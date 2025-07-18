@@ -22,6 +22,7 @@
     "clsx": "^2.1.1",
     "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
+    "express": "^5.1.0",
     "express-rate-limit": "^8.0.1",
     "framer-motion": "^12.23.6",
     "helmet": "^8.1.0",
