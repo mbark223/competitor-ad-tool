@@ -23,16 +23,6 @@ export default function CompetitorsPage() {
         </CardHeader>
         <CardContent>
           <CompanySearch autoFocus />
-          
-          <div className="mt-6">
-            <h3 className="text-sm font-medium mb-3">Example searches:</h3>
-            <div className="text-sm text-muted-foreground space-y-1">
-              <p>• "Caesars Palace Online Casino"</p>
-              <p>• "DraftKings"</p>
-              <p>• "FanDuel"</p>
-              <p>• "BetMGM"</p>
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>
