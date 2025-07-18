@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Competitor {
+  id        String   @id @default(cuid())
+  name      String
+  domain    String
+  platforms String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  ads       Ad[]
+  rankings  CompetitorRanking[]
+  
+  @@map("competitors")
+}
+
+model Ad {
+  id             String    @id @default(cuid())
+  competitorId   String
+  platform       String
+  creativeUrl    String?
+  text           String
+  dateFound      DateTime  @default(now())
+  estimatedReach Int?
+  format         String
+  isActive       Boolean   @default(true)
+  metadata       Json?
+  
+  competitor Competitor @relation(fields: [competitorId], references: [id], onDelete: Cascade)
+  bookmarks  Bookmark[]
+  
+  @@map("ads")
+}
+
+model SearchResult {
+  id               String   @id @default(cuid())
+  keyword          String
+  state            String
+  date             DateTime @default(now())
+  serpScreenshot   String?
+  
+  rankings CompetitorRanking[]
+  
+  @@map("search_results")
+}
+
+model CompetitorRanking {
+  id             String @id @default(cuid())
+  competitorId   String
+  searchResultId String
+  position       Int
+  adCopy         String?
+  url            String
+  
+  competitor   Competitor   @relation(fields: [competitorId], references: [id], onDelete: Cascade)
+  searchResult SearchResult @relation(fields: [searchResultId], references: [id], onDelete: Cascade)
+  
+  @@map("competitor_rankings")
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  adId      String
+  notes     String?
+  createdAt DateTime @default(now())
+  
+  ad Ad @relation(fields: [adId], references: [id], onDelete: Cascade)
+  
+  @@map("bookmarks")
+}

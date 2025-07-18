@@ -1,0 +1,14 @@
+// Simplified middleware for initial testing
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+
+export async function middleware(request: NextRequest) {
+  // Allow all requests for now - we'll enable security after testing
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: [
+    "/((?!api/auth|_next/static|_next/image|favicon.ico).*)",
+  ],
+}
