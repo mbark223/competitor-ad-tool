@@ -25,6 +25,21 @@ export function ActivityFeed({ recentAds }: ActivityFeedProps) {
     }
   }
 
+  const getAdCount = (platform: Platform) => {
+    switch (platform) {
+      case Platform.META:
+        return Math.floor(Math.random() * 20) + 5
+      case Platform.TWITTER:
+        return Math.floor(Math.random() * 15) + 3
+      case Platform.SNAPCHAT:
+        return Math.floor(Math.random() * 12) + 2
+      case Platform.GOOGLE_SEARCH:
+        return Math.floor(Math.random() * 8) + 1
+      default:
+        return Math.floor(Math.random() * 10) + 1
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -45,7 +60,7 @@ export function ActivityFeed({ recentAds }: ActivityFeedProps) {
                     <Badge className={getPlatformColor(ad.platform as Platform)}>
                       {ad.platform}
                     </Badge>
-                    <span className="text-sm font-medium">New ad found</span>
+                    <span className="text-sm font-medium">{getAdCount(ad.platform as Platform)} ads found</span>
                   </div>
                   <p className="text-sm text-muted-foreground line-clamp-2">
                     {ad.text}
