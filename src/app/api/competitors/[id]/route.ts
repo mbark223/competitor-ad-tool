@@ -72,76 +72,65 @@ export async function GET(
         {
           imageUrl: "https://picsum.photos/400/300?random=caesars1",
           format: "image",
-          text: "Get $100 in Casino Credits when you sign up",
-          reach: 125000
+          text: "Get $100 in Casino Credits when you sign up"
         },
         {
           imageUrl: "https://picsum.photos/400/300?random=caesars2",
           format: "image", 
-          text: "Play your favorite slots with 200% bonus",
-          reach: 98000
+          text: "Play your favorite slots with 200% bonus"
         },
         {
           imageUrl: "https://picsum.photos/400/300?random=caesars3",
           format: "carousel",
-          text: "Experience luxury gaming at Caesars Palace",
-          reach: 156000
+          text: "Experience luxury gaming at Caesars Palace"
         },
         {
           imageUrl: "https://picsum.photos/400/300?random=caesars4",
           format: "video",
-          text: "Watch and win big at Caesars Sportsbook",
-          reach: 203000
+          text: "Watch and win big at Caesars Sportsbook"
         }
       ],
       "draftkings": [
         {
           imageUrl: "https://picsum.photos/400/300?random=draftkings1",
           format: "image",
-          text: "Bet $5, Get $150 in bonus bets",
-          reach: 89000
+          text: "Bet $5, Get $150 in bonus bets"
         },
         {
           imageUrl: "https://picsum.photos/400/300?random=draftkings2",
           format: "image", 
-          text: "NFL Sunday - Place your bets now",
-          reach: 145000
+          text: "NFL Sunday - Place your bets now"
         }
       ],
       "fanduel": [
         {
           imageUrl: "https://picsum.photos/400/300?random=fanduel1",
           format: "image",
-          text: "Bet $5, Win $150 - NFL Week 1",
-          reach: 112000
+          text: "Bet $5, Win $150 - NFL Week 1"
         },
         {
           imageUrl: "https://picsum.photos/400/300?random=fanduel2",
           format: "carousel",
-          text: "Same Game Parlay - Boost your winnings",
-          reach: 87000
+          text: "Same Game Parlay - Boost your winnings"
         }
       ],
       "betmgm": [
         {
           imageUrl: "https://picsum.photos/400/300?random=betmgm1",
           format: "image",
-          text: "Risk-Free Bet up to $1000",
-          reach: 78000
+          text: "Risk-Free Bet up to $1000"
         }
       ],
       "nike": [
         {
           imageUrl: "https://picsum.photos/400/300?random=nike1",
           format: "image",
-          text: "Just Do It - Air Force 1",
-          reach: 234000
+          text: "Just Do It - Air Force 1"
         },
         {
           imageUrl: "https://picsum.photos/400/300?random=nike2",
           format: "image",
-          text: "Air Max 90 - Classic comfort",
-          reach: 189000
+          text: "Air Max 90 - Classic comfort"
         }
       ]
     }
@@ -160,7 +149,6 @@ export async function GET(
             text: ad.text,
             imageUrl: ad.creativeUrl || ad.ad_snapshot_url,
             dateFound: ad.dateFound || ad.ad_creation_time,
-            estimatedReach: ad.estimatedReach,
             format: ad.format,
             isActive: ad.isActive
           }))
@@ -185,7 +173,6 @@ export async function GET(
         text: creative?.text || "",
         imageUrl: creative?.imageUrl || `https://picsum.photos/400/300?random=${id}-${i}`,
         dateFound: new Date(Date.now() - (i + 1) * 24 * 60 * 60 * 1000).toISOString(),
-        estimatedReach: creative?.reach || Math.floor(Math.random() * 50000) + 5000,
         format: creative?.format || ["image", "video", "carousel"][i % 3],
         isActive: Math.random() > 0.2
       }
@@ -196,8 +183,7 @@ export async function GET(
     // Generate platform stats
     const platformStats = competitor.platforms.map((platform: string) => ({
       platform,
-      _count: { platform: Math.floor(Math.random() * 20) + 5 },
-      _avg: { estimatedReach: Math.floor(Math.random() * 30000) + 10000 }
+      _count: { platform: Math.floor(Math.random() * 20) + 5 }
     }))
 
     // Generate recent activity

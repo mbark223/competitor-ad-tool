@@ -15,9 +15,6 @@ interface PlatformActivityProps {
     _count: {
       platform: number
     }
-    _avg: {
-      estimatedReach?: number
-    }
   }[]
 }
 
@@ -87,10 +84,7 @@ export function PlatformActivity({ ads, platformStats }: PlatformActivityProps) 
             <CardContent>
               <div className="text-2xl font-bold">{stat._count.platform}</div>
               <p className="text-xs text-muted-foreground">
-                {stat._avg.estimatedReach 
-                  ? `Avg reach: ${Math.round(stat._avg.estimatedReach).toLocaleString()}`
-                  : "ads tracked"
-                }
+                ads tracked
               </p>
             </CardContent>
           </Card>

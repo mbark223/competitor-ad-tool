@@ -15,7 +15,6 @@ export interface Ad {
   creativeUrl?: string;
   text: string;
   dateFound: Date;
-  estimatedReach?: number;
   format: AdFormat;
   isActive: boolean;
   metadata?: Record<string, any>;
