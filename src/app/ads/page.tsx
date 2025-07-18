@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { AdCard } from "@/components/ads/ad-card"
-import { AdFilters } from "@/components/ads/ad-filters"
+// import { AdFilters } from "@/components/ads/ad-filters"
 import { Button } from "@/components/ui/button"
 import { Ad, AdFilter, Platform, AdFormat } from "@/types"
 import { Download, Grid, List } from "lucide-react"
@@ -195,11 +195,10 @@ export default function AdsPage() {
 
       <div className="grid gap-6 lg:grid-cols-4">
         <div className="lg:col-span-1">
-          <AdFilters
-            filters={filters}
-            onFiltersChange={setFilters}
-            onClearFilters={() => setFilters({})}
-          />
+          {/* Filters temporarily disabled for debugging */}
+          <div className="text-sm text-muted-foreground">
+            Filters coming soon...
+          </div>
         </div>
 
         <div className="lg:col-span-3">

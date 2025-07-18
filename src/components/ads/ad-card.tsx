@@ -15,14 +15,18 @@ interface AdCardProps {
 }
 
 export function AdCard({ ad, onBookmark, isBookmarked = false }: AdCardProps) {
-  const getPlatformColor = (platform: Platform) => {
+  const getPlatformColor = (platform: Platform | string) => {
     switch (platform) {
+      case "meta":
       case Platform.META:
         return "bg-blue-100 text-blue-800"
+      case "twitter":
       case Platform.TWITTER:
         return "bg-sky-100 text-sky-800"
+      case "snapchat":
       case Platform.SNAPCHAT:
         return "bg-yellow-100 text-yellow-800"
+      case "google_search":
       case Platform.GOOGLE_SEARCH:
         return "bg-green-100 text-green-800"
       default:
@@ -34,7 +38,7 @@ export function AdCard({ ad, onBookmark, isBookmarked = false }: AdCardProps) {
     <Card className="flex flex-col h-full">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <Badge className={getPlatformColor(ad.platform as Platform)}>
+          <Badge className={getPlatformColor(ad.platform)}>
             {ad.platform}
           </Badge>
           <Button
