@@ -117,53 +117,62 @@ export function PlatformActivity({ ads, platformStats }: PlatformActivityProps) 
             
             {Object.entries(groupedAds).map(([platform, platformAds]) => (
               <TabsContent key={platform} value={platform} className="space-y-4">
-                {platformAds.slice(0, 10).map((ad) => (
-                  <div key={ad.id} className="border rounded-lg p-4">
-                    <div className="flex items-start space-x-4">
-                      <div className="relative w-32 h-24 bg-muted rounded-lg overflow-hidden flex-shrink-0">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {platformAds.slice(0, 12).map((ad) => (
+                    <div key={ad.id} className="border rounded-lg overflow-hidden">
+                      <div className="relative aspect-video bg-muted">
                         <Image
-                          src={ad.imageUrl || `https://picsum.photos/200/150?random=${ad.id}`}
+                          src={ad.imageUrl || `https://picsum.photos/400/300?random=${ad.id}`}
                           alt="Ad creative"
                           fill
                           className="object-cover"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement
-                            target.src = `https://placehold.co/200x150/cccccc/666666?text=Ad+${ad.id}`
+                            target.src = `https://placehold.co/400x300/cccccc/666666?text=${getPlatformDisplayName(platform)}`
                           }}
                         />
-                      </div>
-                      
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <Badge className={getPlatformColor(ad.platform)}>
-                              {getPlatformDisplayName(ad.platform)}
-                            </Badge>
-                            <Badge variant="outline">{ad.format}</Badge>
-                            {!ad.isActive && (
-                              <Badge variant="destructive">Inactive</Badge>
-                            )}
+                        {ad.format === "video" && (
+                          <div className="absolute bottom-2 right-2 bg-black/60 text-white px-2 py-1 rounded text-xs">
+                            VIDEO
                           </div>
-                          <div className="flex items-center text-sm text-muted-foreground">
-                            <Calendar className="mr-1 h-3 w-3" />
-                            {new Date(ad.dateFound).toLocaleDateString()}
-                          </div>
-                        </div>
-                        
-                        {ad.estimatedReach && (
-                          <div className="flex items-center text-xs text-muted-foreground">
-                            <BarChart3 className="mr-1 h-3 w-3" />
-                            Estimated reach: {ad.estimatedReach.toLocaleString()}
+                        )}
+                        {ad.format === "carousel" && (
+                          <div className="absolute bottom-2 right-2 bg-black/60 text-white px-2 py-1 rounded text-xs">
+                            CAROUSEL
                           </div>
                         )}
                       </div>
+                      
+                      <div className="p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <Badge className={getPlatformColor(ad.platform)} variant="secondary">
+                            {getPlatformDisplayName(ad.platform)}
+                          </Badge>
+                          {!ad.isActive && (
+                            <Badge variant="destructive" className="text-xs">Inactive</Badge>
+                          )}
+                        </div>
+                        
+                        <div className="space-y-1 text-xs text-muted-foreground">
+                          <div className="flex items-center">
+                            <Calendar className="mr-1 h-3 w-3" />
+                            {new Date(ad.dateFound).toLocaleDateString()}
+                          </div>
+                          {ad.estimatedReach && (
+                            <div className="flex items-center">
+                              <BarChart3 className="mr-1 h-3 w-3" />
+                              {ad.estimatedReach.toLocaleString()} reach
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
                 
-                {platformAds.length > 10 && (
+                {platformAds.length > 12 && (
                   <p className="text-sm text-muted-foreground text-center">
-                    Showing 10 of {platformAds.length} ads on {getPlatformDisplayName(platform)}
+                    Showing 12 of {platformAds.length} ads on {getPlatformDisplayName(platform)}
                   </p>
                 )}
               </TabsContent>

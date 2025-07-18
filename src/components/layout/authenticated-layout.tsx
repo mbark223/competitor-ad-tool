@@ -47,15 +47,6 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
                 Company Lookup
               </Button>
             </Link>
-            <Link href="/ads">
-              <Button 
-                variant={pathname === "/ads" ? "default" : "ghost"} 
-                className="w-full justify-start"
-              >
-                <Eye className="mr-2 h-4 w-4" />
-                Ad Explorer
-              </Button>
-            </Link>
             <Link href="/search">
               <Button 
                 variant={pathname === "/search" ? "default" : "ghost"} 

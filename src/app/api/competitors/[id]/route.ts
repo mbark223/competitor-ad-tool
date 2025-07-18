@@ -66,25 +66,17 @@ export async function GET(
       )
     }
 
-    // Generate mock ads
-    const mockAds = Array.from({ length: 8 }, (_, i) => ({
+    // Generate mock ads that look like real Meta Ad Library ads
+    const mockAds = Array.from({ length: 12 }, (_, i) => ({
       id: `ad-${id}-${i}`,
       competitorId: id,
       platform: competitor.platforms[i % competitor.platforms.length],
-      text: [
-        "Limited time offer! Get 50% off your first month with our premium service.",
-        "Revolutionary new product launch! Experience the future of technology.",
-        "Join thousands of satisfied customers. Start your journey today.",
-        "Black Friday Sale! Up to 70% off all products. Shop now while supplies last.",
-        "Professional services you can trust. 20+ years of experience.",
-        "Transform your business with our cutting-edge solutions.",
-        "Don't miss out on this exclusive deal. Sign up now!",
-        "Award-winning platform trusted by industry leaders."
-      ][i % 8],
-      imageUrl: `https://via.placeholder.com/400x300?text=${encodeURIComponent(competitor.name)}+Ad+${i+1}`,
+      text: "",
+      imageUrl: `https://picsum.photos/400/300?random=${id}-${i}`,
       dateFound: new Date(Date.now() - (i + 1) * 24 * 60 * 60 * 1000).toISOString(),
       estimatedReach: Math.floor(Math.random() * 50000) + 5000,
-      isActive: Math.random() > 0.3
+      format: ["image", "video", "carousel"][i % 3],
+      isActive: Math.random() > 0.2
     }))
 
     // Generate platform stats
