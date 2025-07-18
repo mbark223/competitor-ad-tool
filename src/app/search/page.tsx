@@ -4,155 +4,234 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { RefreshCw, Download, MapPin, Search } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Search, MapPin, TrendingUp, AlertCircle } from "lucide-react"
 
-interface SimpleSearchResult {
+interface BrandRanking {
   id: string
   keyword: string
   state: string
+  position: number | null
+  adCopy: string
+  url: string
   date: string
-  rankings: Array<{
-    id: string
-    competitorName: string
-    position: number
-    adCopy: string
-    url: string
-  }>
+  isActive: boolean
 }
 
 export default function SearchPage() {
-  const [searchResults, setSearchResults] = useState<SimpleSearchResult[]>([])
-  const [loading, setLoading] = useState(true)
-  const [refreshing, setRefreshing] = useState(false)
+  const [company, setCompany] = useState("")
+  const [keyword, setKeyword] = useState("")
+  const [rankings, setRankings] = useState<BrandRanking[]>([])
+  const [loading, setLoading] = useState(false)
+  const [searched, setSearched] = useState(false)
 
-  useEffect(() => {
-    const fetchSearchResults = async () => {
-      try {
-        const mockResults: SimpleSearchResult[] = [
-          {
-            id: "1",
-            keyword: "online casino",
-            state: "CA",
-            date: "2 hours ago",
-            rankings: [
-              {
-                id: "r1",
-                competitorName: "Caesars Palace",
-                position: 1,
-                adCopy: "Get $100 in Casino Credits when you sign up",
-                url: "https://caesars.com/casino"
-              },
-              {
-                id: "r2", 
-                competitorName: "BetMGM",
-                position: 3,
-                adCopy: "Risk-Free Bet up to $1000 - Join Now",
-                url: "https://betmgm.com/casino"
-              }
-            ]
-          },
-          {
-            id: "2",
-            keyword: "sports betting",
-            state: "TX",
-            date: "4 hours ago",
-            rankings: [
-              {
-                id: "r3",
-                competitorName: "DraftKings",
-                position: 2,
-                adCopy: "Bet $5, Get $150 in bonus bets",
-                url: "https://draftkings.com"
-              },
-              {
-                id: "r4",
-                competitorName: "FanDuel",
-                position: 4,
-                adCopy: "Same Game Parlay - Boost your winnings",
-                url: "https://fanduel.com"
-              }
-            ]
-          },
-          {
-            id: "3",
-            keyword: "daily fantasy sports",
-            state: "FL",
-            date: "6 hours ago",
-            rankings: [
-              {
-                id: "r5",
-                competitorName: "FanDuel",
-                position: 1,
-                adCopy: "Win big with daily fantasy football",
-                url: "https://fanduel.com/fantasy"
-              },
-              {
-                id: "r6",
-                competitorName: "DraftKings",
-                position: 2,
-                adCopy: "NFL DFS - Play for millions in prizes",
-                url: "https://draftkings.com/fantasy"
-              }
-            ]
-          },
-          {
-            id: "4",
-            keyword: "casino games",
-            state: "NY",
-            date: "8 hours ago",
-            rankings: [
-              {
-                id: "r7",
-                competitorName: "Caesars Palace",
-                position: 1,
-                adCopy: "Play your favorite slots with 200% bonus",
-                url: "https://caesars.com/games"
-              }
-            ]
-          }
-        ]
-        
-        setSearchResults(mockResults)
-      } catch (error) {
-        console.error("Failed to fetch search results:", error)
-      } finally {
-        setLoading(false)
-      }
+  // Mock data for different brand/keyword combinations
+  const mockRankings: Record<string, Record<string, BrandRanking[]>> = {
+    "caesars": {
+      "online casino": [
+        {
+          id: "1",
+          keyword: "online casino",
+          state: "CA",
+          position: 1,
+          adCopy: "Get $100 in Casino Credits when you sign up - Caesars Palace",
+          url: "https://caesars.com/casino",
+          date: "2 hours ago",
+          isActive: true
+        },
+        {
+          id: "2",
+          keyword: "online casino",
+          state: "TX",
+          position: 2,
+          adCopy: "Play premium slots at Caesars Palace Online Casino",
+          url: "https://caesars.com/casino",
+          date: "2 hours ago",
+          isActive: true
+        },
+        {
+          id: "3",
+          keyword: "online casino",
+          state: "NY",
+          position: 4,
+          adCopy: "New York's premium online casino - Caesars Palace",
+          url: "https://caesars.com/casino",
+          date: "3 hours ago",
+          isActive: true
+        }
+      ],
+      "casino games": [
+        {
+          id: "4",
+          keyword: "casino games",
+          state: "CA",
+          position: 1,
+          adCopy: "Play your favorite slots with 200% bonus - Caesars",
+          url: "https://caesars.com/games",
+          date: "1 hour ago",
+          isActive: true
+        },
+        {
+          id: "5",
+          keyword: "casino games",
+          state: "FL",
+          position: 3,
+          adCopy: "Experience luxury gaming at Caesars Palace",
+          url: "https://caesars.com/games",
+          date: "4 hours ago",
+          isActive: true
+        }
+      ],
+      "sports betting": [
+        {
+          id: "6",
+          keyword: "sports betting",
+          state: "CA",
+          position: null,
+          adCopy: "",
+          url: "",
+          date: "5 hours ago",
+          isActive: false
+        },
+        {
+          id: "7",
+          keyword: "sports betting",
+          state: "TX",
+          position: 7,
+          adCopy: "Bet on sports with Caesars Sportsbook",
+          url: "https://caesars.com/sportsbook",
+          date: "1 hour ago",
+          isActive: true
+        }
+      ]
+    },
+    "draftkings": {
+      "sports betting": [
+        {
+          id: "8",
+          keyword: "sports betting",
+          state: "CA",
+          position: 1,
+          adCopy: "Bet $5, Get $150 in bonus bets - DraftKings",
+          url: "https://draftkings.com",
+          date: "1 hour ago",
+          isActive: true
+        },
+        {
+          id: "9",
+          keyword: "sports betting",
+          state: "TX",
+          position: 2,
+          adCopy: "NFL betting with DraftKings - Place your bets now",
+          url: "https://draftkings.com",
+          date: "2 hours ago",
+          isActive: true
+        }
+      ],
+      "daily fantasy": [
+        {
+          id: "10",
+          keyword: "daily fantasy",
+          state: "CA",
+          position: 1,
+          adCopy: "Win big with daily fantasy football - DraftKings",
+          url: "https://draftkings.com/fantasy",
+          date: "3 hours ago",
+          isActive: true
+        }
+      ],
+      "online casino": [
+        {
+          id: "11",
+          keyword: "online casino",
+          state: "CA",
+          position: null,
+          adCopy: "",
+          url: "",
+          date: "4 hours ago",
+          isActive: false
+        }
+      ]
+    },
+    "nike": {
+      "running shoes": [
+        {
+          id: "12",
+          keyword: "running shoes",
+          state: "CA",
+          position: 1,
+          adCopy: "Just Do It - Nike Air Max running shoes",
+          url: "https://nike.com/running",
+          date: "1 hour ago",
+          isActive: true
+        },
+        {
+          id: "13",
+          keyword: "running shoes",
+          state: "TX",
+          position: 2,
+          adCopy: "Premium running shoes - Nike Air Zoom",
+          url: "https://nike.com/running",
+          date: "2 hours ago",
+          isActive: true
+        }
+      ],
+      "basketball shoes": [
+        {
+          id: "14",
+          keyword: "basketball shoes",
+          state: "CA",
+          position: 1,
+          adCopy: "Nike Air Jordan - Performance basketball shoes",
+          url: "https://nike.com/basketball",
+          date: "1 hour ago",
+          isActive: true
+        }
+      ]
     }
+  }
 
-    fetchSearchResults()
-  }, [])
+  const handleSearch = async () => {
+    if (!company || !keyword) return
 
-  const handleRefresh = async () => {
-    setRefreshing(true)
+    setLoading(true)
+    setSearched(true)
+
+    // Simulate API call
     setTimeout(() => {
-      setRefreshing(false)
-    }, 2000)
+      const companyKey = company.toLowerCase().replace(/\s+/g, '')
+      const keywordKey = keyword.toLowerCase()
+      
+      const companyData = mockRankings[companyKey]
+      const keywordData = companyData?.[keywordKey] || []
+      
+      setRankings(keywordData)
+      setLoading(false)
+    }, 1000)
   }
 
-  const handleExport = () => {
-    console.log("Exporting search results...")
-  }
-
-  const getPositionColor = (position: number) => {
+  const getPositionColor = (position: number | null) => {
+    if (!position) return "bg-gray-100 text-gray-800"
     if (position <= 3) return "bg-green-100 text-green-800"
     if (position <= 6) return "bg-yellow-100 text-yellow-800"
     return "bg-red-100 text-red-800"
   }
 
-  if (loading) {
-    return (
-      <div className="container mx-auto p-6">
-        <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-200 rounded w-48"></div>
-          <div className="grid gap-4 md:grid-cols-3">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    )
+  const getPositionText = (position: number | null) => {
+    if (!position) return "Not ranking"
+    return `#${position}`
+  }
+
+  const getAveragePosition = () => {
+    const activeRankings = rankings.filter(r => r.position)
+    if (activeRankings.length === 0) return null
+    const sum = activeRankings.reduce((acc, r) => acc + (r.position || 0), 0)
+    return Math.round(sum / activeRankings.length)
+  }
+
+  const getActiveStates = () => {
+    return rankings.filter(r => r.position).length
   }
 
   return (
@@ -161,114 +240,207 @@ export default function SearchPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Search Intelligence</h1>
           <p className="text-muted-foreground">
-            Monitor competitor search rankings across key markets
+            Search how any brand ranks for specific keywords across different markets
           </p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" onClick={handleRefresh} disabled={refreshing}>
-            <RefreshCw className={`mr-2 h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
-            Refresh
-          </Button>
-          <Button variant="outline" onClick={handleExport}>
-            <Download className="mr-2 h-4 w-4" />
-            Export
-          </Button>
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Keywords Tracked</CardTitle>
-            <Search className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{searchResults.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Across all states
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Competitors Found</CardTitle>
-            <MapPin className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {new Set(searchResults.flatMap(r => r.rankings.map(rank => rank.competitorName))).size}
+      {/* Search Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Search className="mr-2 h-5 w-5" />
+            Brand & Keyword Search
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="space-y-2">
+              <Label htmlFor="company">Company Name</Label>
+              <Input
+                id="company"
+                placeholder="e.g., Caesars, DraftKings, Nike"
+                value={company}
+                onChange={(e) => setCompany(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              />
             </div>
-            <p className="text-xs text-muted-foreground">
-              In search results
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Top Position</CardTitle>
-            <MapPin className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              #2
+            <div className="space-y-2">
+              <Label htmlFor="keyword">Keyword</Label>
+              <Input
+                id="keyword"
+                placeholder="e.g., online casino, sports betting"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              />
             </div>
-            <p className="text-xs text-muted-foreground">
-              Top competitor position
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+            <div className="flex items-end">
+              <Button 
+                onClick={handleSearch}
+                disabled={loading || !company || !keyword}
+                className="w-full"
+              >
+                {loading ? (
+                  <>
+                    <Search className="mr-2 h-4 w-4 animate-spin" />
+                    Searching...
+                  </>
+                ) : (
+                  <>
+                    <Search className="mr-2 h-4 w-4" />
+                    Search Rankings
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-      <div>
-        <div className="mb-4">
-          <h2 className="text-xl font-semibold">Keyword Rankings</h2>
-          <p className="text-sm text-muted-foreground">
-            Current search positions for tracked keywords
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          {searchResults.map((result) => (
-            <Card key={result.id}>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-lg">{result.keyword}</CardTitle>
-                    <p className="text-sm text-muted-foreground">
-                      {result.state} • {result.date}
-                    </p>
-                  </div>
-                  <Badge variant="outline">{result.rankings.length} competitors</Badge>
-                </div>
+      {/* Results Section */}
+      {searched && (
+        <>
+          {/* Stats Overview */}
+          <div className="grid gap-4 md:grid-cols-3">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Average Position</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  {result.rankings.map((ranking) => (
-                    <div key={ranking.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center space-x-3">
+                <div className="text-2xl font-bold">
+                  {getAveragePosition() ? `#${getAveragePosition()}` : "N/A"}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Across all markets
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Active Markets</CardTitle>
+                <MapPin className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {getActiveStates()}/{rankings.length}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  States with rankings
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Keyword</CardTitle>
+                <Search className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold truncate">
+                  {keyword || "None"}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Search term
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Rankings Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                {company} Rankings for "{keyword}"
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {rankings.length === 0 ? (
+                <div className="text-center py-8">
+                  <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <h3 className="mt-2 text-sm font-medium text-muted-foreground">
+                    No rankings found
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Try searching for a different company or keyword combination.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {rankings.map((ranking) => (
+                    <div key={ranking.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex items-center space-x-4">
                         <Badge className={getPositionColor(ranking.position)}>
-                          #{ranking.position}
+                          {getPositionText(ranking.position)}
                         </Badge>
                         <div>
-                          <div className="font-medium">{ranking.competitorName}</div>
-                          <div className="text-sm text-muted-foreground line-clamp-1">
-                            {ranking.adCopy}
+                          <div className="font-medium">{ranking.state}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {ranking.date}
                           </div>
                         </div>
+                        <div className="flex-1 max-w-md">
+                          {ranking.adCopy ? (
+                            <div className="text-sm line-clamp-2">
+                              {ranking.adCopy}
+                            </div>
+                          ) : (
+                            <div className="text-sm text-muted-foreground italic">
+                              No ad found
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <div className="text-xs text-muted-foreground truncate max-w-xs">
-                        {ranking.url}
+                      <div className="text-right">
+                        <div className="text-xs text-muted-foreground truncate max-w-xs">
+                          {ranking.url || "No URL"}
+                        </div>
+                        <div className="mt-1">
+                          <Badge variant={ranking.isActive ? "default" : "secondary"}>
+                            {ranking.isActive ? "Active" : "Inactive"}
+                          </Badge>
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
+              )}
+            </CardContent>
+          </Card>
+        </>
+      )}
+
+      {/* Help Section */}
+      {!searched && (
+        <Card>
+          <CardHeader>
+            <CardTitle>How to Use Search Intelligence</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4 text-sm">
+              <div>
+                <strong>1. Enter a Company Name:</strong> Type any brand you want to analyze (e.g., "Caesars", "DraftKings", "Nike")
+              </div>
+              <div>
+                <strong>2. Enter a Keyword:</strong> Add the search term you want to check rankings for (e.g., "online casino", "sports betting", "running shoes")
+              </div>
+              <div>
+                <strong>3. View Rankings:</strong> See how that brand ranks for that keyword across different states, including their ad copy and position
+              </div>
+              <div className="bg-muted p-3 rounded-lg">
+                <strong>Example searches:</strong>
+                <ul className="mt-2 space-y-1">
+                  <li>• Caesars + "online casino"</li>
+                  <li>• DraftKings + "sports betting"</li>
+                  <li>• Nike + "running shoes"</li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }
