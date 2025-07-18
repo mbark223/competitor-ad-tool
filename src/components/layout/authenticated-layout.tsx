@@ -24,12 +24,8 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
           <div className="flex h-16 items-center justify-between border-b px-6">
             <Link href="/" className="flex items-center space-x-2">
               <BarChart3 className="h-6 w-6 text-blue-600" />
-              <span className="font-bold">AdIntel</span>
+              <span className="font-bold">Competitor Ads</span>
             </Link>
-            <div className="flex items-center space-x-2">
-              <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-              <span className="text-xs text-green-600 font-medium">DEMO</span>
-            </div>
           </div>
           
           <nav className="space-y-2 p-4">
@@ -71,12 +67,12 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
             </Link>
           </nav>
 
-          {/* Demo user info */}
+          {/* User info */}
           <div className="absolute bottom-0 left-0 right-0 w-64 border-t bg-card p-4">
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
-                <span className="text-sm font-medium">Demo User</span>
-                <span className="text-xs text-muted-foreground">Testing Mode</span>
+                <span className="text-sm font-medium">Internal User</span>
+                <span className="text-xs text-muted-foreground">Competitor Intelligence</span>
               </div>
             </div>
           </div>
@@ -98,7 +94,7 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
         <div className="flex h-16 items-center justify-between border-b px-6">
           <Link href="/" className="flex items-center space-x-2">
             <Shield className="h-6 w-6 text-green-600" />
-            <span className="font-bold">AdIntel</span>
+            <span className="font-bold">Competitor Ads</span>
           </Link>
           <div className="flex items-center space-x-2">
             <div className="h-2 w-2 bg-green-500 rounded-full"></div>
