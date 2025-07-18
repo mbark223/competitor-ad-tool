@@ -63,10 +63,6 @@ export function AdCard({ ad, onBookmark, isBookmarked = false }: AdCardProps) {
             />
           </div>
         )}
-        
-        <p className="text-sm text-foreground line-clamp-4 mb-4">
-          {ad.text}
-        </p>
 
         <div className="space-y-2 text-xs text-muted-foreground">
           <div className="flex items-center space-x-1">

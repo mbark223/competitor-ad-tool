@@ -62,9 +62,6 @@ export function ActivityFeed({ recentAds }: ActivityFeedProps) {
                     </Badge>
                     <span className="text-sm font-medium">{getAdCount(ad.platform as Platform)} ads found</span>
                   </div>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {ad.text}
-                  </p>
                   <p className="text-xs text-muted-foreground">
                     {formatDistanceToNow(ad.dateFound, { addSuffix: true })}
                   </p>

@@ -152,10 +152,6 @@ export function PlatformActivity({ ads, platformStats }: PlatformActivityProps) 
                           </div>
                         </div>
                         
-                        <p className="text-sm text-foreground line-clamp-3">
-                          {ad.text}
-                        </p>
-                        
                         {ad.estimatedReach && (
                           <div className="flex items-center text-xs text-muted-foreground">
                             <BarChart3 className="mr-1 h-3 w-3" />
