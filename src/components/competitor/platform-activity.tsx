@@ -126,9 +126,10 @@ export function PlatformActivity({ ads, platformStats }: PlatformActivityProps) 
                           alt="Ad creative"
                           fill
                           className="object-cover"
+                          unoptimized
                           onError={(e) => {
                             const target = e.target as HTMLImageElement
-                            target.src = `https://placehold.co/400x300/cccccc/666666?text=${getPlatformDisplayName(platform)}`
+                            target.src = `https://placehold.co/400x300/e5e7eb/6b7280?text=${encodeURIComponent(getPlatformDisplayName(platform))}`
                           }}
                         />
                         {ad.format === "video" && (
@@ -158,12 +159,6 @@ export function PlatformActivity({ ads, platformStats }: PlatformActivityProps) 
                             <Calendar className="mr-1 h-3 w-3" />
                             {new Date(ad.dateFound).toLocaleDateString()}
                           </div>
-                          {ad.estimatedReach && (
-                            <div className="flex items-center">
-                              <BarChart3 className="mr-1 h-3 w-3" />
-                              {ad.estimatedReach.toLocaleString()} reach
-                            </div>
-                          )}
                         </div>
                       </div>
                     </div>

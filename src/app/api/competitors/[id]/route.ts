@@ -66,29 +66,29 @@ export async function GET(
       )
     }
 
-    // Generate mock ads with actual ad creative URLs from real platforms
+    // Generate mock ads with more reliable image URLs
     const realAdCreatives = {
       "caesars": [
         {
-          imageUrl: "https://scontent.fsjc1-1.fna.fbcdn.net/v/t45.1600-4/462467593_120212073000005591_8346445673553993829_n.jpg?stp=cp0_dst-jpg_q75_s526x296&_nc_cat=106&ccb=1-7&_nc_sid=67cdda&_nc_ohc=qjqEZdFhqfIQ7kNvgHCJJWj&_nc_ht=scontent.fsjc1-1.fna.fbcdn.net&oh=00_AYCKpd4lKiPWqgL5rNzKCj3qDfU7l7-qxOiJGiKU_E0iow&oe=6769F8B8",
+          imageUrl: "https://picsum.photos/400/300?random=caesars1",
           format: "image",
           text: "Get $100 in Casino Credits when you sign up",
           reach: 125000
         },
         {
-          imageUrl: "https://scontent.fsjc1-1.fna.fbcdn.net/v/t45.1600-4/462514227_120212073048005591_4926859577839174947_n.jpg?stp=cp0_dst-jpg_q75_s526x296&_nc_cat=102&ccb=1-7&_nc_sid=67cdda&_nc_ohc=xLdU3aQKGkgQ7kNvgE1MUJB&_nc_ht=scontent.fsjc1-1.fna.fbcdn.net&oh=00_AYDiwOzaG-3bSKyXZmxqmRBdIBMzYwODZZQYnD8Vz0lCIg&oe=676A0A5A",
+          imageUrl: "https://picsum.photos/400/300?random=caesars2",
           format: "image", 
           text: "Play your favorite slots with 200% bonus",
           reach: 98000
         },
         {
-          imageUrl: "https://scontent.fsjc1-1.fna.fbcdn.net/v/t45.1600-4/462527848_120212073132005591_8456234562334471002_n.jpg?stp=cp0_dst-jpg_q75_s526x296&_nc_cat=111&ccb=1-7&_nc_sid=67cdda&_nc_ohc=YRVnEZJdY7cQ7kNvgGnQCRy&_nc_ht=scontent.fsjc1-1.fna.fbcdn.net&oh=00_AYAjbmHuQNYJSUJoZKPQpFdWZkNKPqNDJQnpDQYJjJSb4Q&oe=6769F0D2",
+          imageUrl: "https://picsum.photos/400/300?random=caesars3",
           format: "carousel",
           text: "Experience luxury gaming at Caesars Palace",
           reach: 156000
         },
         {
-          imageUrl: "https://scontent.fsjc1-1.fna.fbcdn.net/v/t45.1600-4/462462847_120212073180005591_3476823456123487123_n.jpg?stp=cp0_dst-jpg_q75_s526x296&_nc_cat=107&ccb=1-7&_nc_sid=67cdda&_nc_ohc=mNpXzI3dVtMQ7kNvgHJdWTz&_nc_ht=scontent.fsjc1-1.fna.fbcdn.net&oh=00_AYBKxJwUoJqNYJSUJoZKPQpFdWZkNKPqNDJQnpDQYJjJSb4Q&oe=676A1B8F",
+          imageUrl: "https://picsum.photos/400/300?random=caesars4",
           format: "video",
           text: "Watch and win big at Caesars Sportsbook",
           reach: 203000
@@ -96,13 +96,13 @@ export async function GET(
       ],
       "draftkings": [
         {
-          imageUrl: "https://pbs.twimg.com/media/GdFkHoHWMAADfBr?format=jpg&name=medium",
+          imageUrl: "https://picsum.photos/400/300?random=draftkings1",
           format: "image",
           text: "Bet $5, Get $150 in bonus bets",
           reach: 89000
         },
         {
-          imageUrl: "https://pbs.twimg.com/media/GdFkHoHWMAADfBr?format=jpg&name=large",
+          imageUrl: "https://picsum.photos/400/300?random=draftkings2",
           format: "image", 
           text: "NFL Sunday - Place your bets now",
           reach: 145000
@@ -110,13 +110,13 @@ export async function GET(
       ],
       "fanduel": [
         {
-          imageUrl: "https://pbs.twimg.com/media/GdGmKp2XoAEtN2V?format=jpg&name=medium",
+          imageUrl: "https://picsum.photos/400/300?random=fanduel1",
           format: "image",
           text: "Bet $5, Win $150 - NFL Week 1",
           reach: 112000
         },
         {
-          imageUrl: "https://pbs.twimg.com/media/GdGmKp2XoAEtN2V?format=jpg&name=large",
+          imageUrl: "https://picsum.photos/400/300?random=fanduel2",
           format: "carousel",
           text: "Same Game Parlay - Boost your winnings",
           reach: 87000
@@ -124,7 +124,7 @@ export async function GET(
       ],
       "betmgm": [
         {
-          imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop",
+          imageUrl: "https://picsum.photos/400/300?random=betmgm1",
           format: "image",
           text: "Risk-Free Bet up to $1000",
           reach: 78000
@@ -132,13 +132,13 @@ export async function GET(
       ],
       "nike": [
         {
-          imageUrl: "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/4f37fca8-6bce-43e7-ad07-f57ae3c13142/air-force-1-07-mens-shoes-jBrhbr.png",
+          imageUrl: "https://picsum.photos/400/300?random=nike1",
           format: "image",
           text: "Just Do It - Air Force 1",
           reach: 234000
         },
         {
-          imageUrl: "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/e777c881-5b62-4250-92a6-362967f54cca/air-max-90-mens-shoes-6n8dNX.png",
+          imageUrl: "https://picsum.photos/400/300?random=nike2",
           format: "image",
           text: "Air Max 90 - Classic comfort",
           reach: 189000
