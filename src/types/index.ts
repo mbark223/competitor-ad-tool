@@ -10,6 +10,7 @@ export interface Competitor {
 export interface Ad {
   id: string;
   competitorId: string;
+  competitorName?: string;
   platform: Platform;
   creativeUrl?: string;
   text: string;
