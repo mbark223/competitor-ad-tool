@@ -30,7 +30,7 @@ export default function AdsPage() {
             id: "1",
             competitorName: "Caesars Palace",
             platform: "meta",
-            creativeUrl: "https://via.placeholder.com/400x300?text=Caesars+Meta+Ad",
+            creativeUrl: "https://picsum.photos/400/300?random=1",
             dateFound: "2 hours ago",
             estimatedReach: 15000,
             format: "image",
@@ -40,7 +40,7 @@ export default function AdsPage() {
             id: "2",
             competitorName: "DraftKings",
             platform: "twitter",
-            creativeUrl: "https://via.placeholder.com/400x300?text=DraftKings+Twitter+Ad",
+            creativeUrl: "https://picsum.photos/400/300?random=2",
             dateFound: "4 hours ago",
             estimatedReach: 8500,
             format: "image",
@@ -50,7 +50,7 @@ export default function AdsPage() {
             id: "3",
             competitorName: "FanDuel",
             platform: "snapchat",
-            creativeUrl: "https://via.placeholder.com/400x600?text=FanDuel+Snapchat+Ad",
+            creativeUrl: "https://picsum.photos/400/600?random=3",
             dateFound: "6 hours ago",
             estimatedReach: 12000,
             format: "video",
@@ -60,7 +60,7 @@ export default function AdsPage() {
             id: "4",
             competitorName: "BetMGM",
             platform: "meta",
-            creativeUrl: "https://via.placeholder.com/800x400?text=BetMGM+Meta+Carousel",
+            creativeUrl: "https://picsum.photos/800/400?random=4",
             dateFound: "8 hours ago",
             estimatedReach: 25000,
             format: "carousel",
@@ -70,7 +70,7 @@ export default function AdsPage() {
             id: "5",
             competitorName: "Nike",
             platform: "google_search",
-            creativeUrl: "https://via.placeholder.com/400x200?text=Nike+Google+Ad",
+            creativeUrl: "https://picsum.photos/400/200?random=5",
             dateFound: "12 hours ago",
             estimatedReach: 18000,
             format: "text",
@@ -171,6 +171,10 @@ export default function AdsPage() {
                   alt="Ad creative"
                   fill
                   className="object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement
+                    target.src = `https://placehold.co/400x300/cccccc/666666?text=${encodeURIComponent(ad.competitorName)}`
+                  }}
                 />
               </div>
 
