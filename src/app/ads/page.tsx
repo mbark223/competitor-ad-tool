@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -22,12 +22,32 @@ interface MetaAd {
   metadata?: any
 }
 
+// Popular brands on Meta platforms
+const POPULAR_BRANDS = [
+  "Nike", "Adidas", "Apple", "Samsung", "Coca-Cola", "Pepsi",
+  "McDonald's", "Burger King", "KFC", "Subway", "Starbucks",
+  "Amazon", "Walmart", "Target", "Best Buy", "Home Depot",
+  "Netflix", "Disney", "Spotify", "YouTube", "TikTok",
+  "Microsoft", "Google", "Meta", "Instagram", "WhatsApp",
+  "Tesla", "Ford", "Toyota", "BMW", "Mercedes-Benz",
+  "Caesars Palace", "DraftKings", "FanDuel", "BetMGM", "MGM Resorts",
+  "Marriott", "Hilton", "Airbnb", "Booking.com", "Expedia",
+  "American Airlines", "Delta", "United Airlines", "Southwest",
+  "Visa", "Mastercard", "PayPal", "Square", "Stripe",
+  "Louis Vuitton", "Gucci", "Chanel", "Hermès", "Prada",
+  "Zara", "H&M", "Uniqlo", "Gap", "Forever 21",
+  "Sephora", "Ulta", "MAC Cosmetics", "Maybelline", "L'Oréal"
+]
+
 export default function AdsPage() {
   const [ads, setAds] = useState<MetaAd[]>([])
   const [loading, setLoading] = useState(false)
   const [searching, setSearching] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [searchedCompany, setSearchedCompany] = useState("")
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
   const searchAds = async () => {
     if (!searchQuery.trim()) return
@@ -62,9 +82,49 @@ export default function AdsPage() {
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
+      setShowSuggestions(false)
       searchAds()
+    } else if (e.key === "Escape") {
+      setShowSuggestions(false)
     }
   }
+
+  const handleInputChange = (value: string) => {
+    setSearchQuery(value)
+    
+    if (value.trim()) {
+      // Filter brands that match the input
+      const filtered = POPULAR_BRANDS.filter(brand => 
+        brand.toLowerCase().includes(value.toLowerCase())
+      ).slice(0, 8) // Show max 8 suggestions
+      
+      setSuggestions(filtered)
+      setShowSuggestions(filtered.length > 0)
+    } else {
+      setSuggestions([])
+      setShowSuggestions(false)
+    }
+  }
+
+  const selectSuggestion = (brand: string) => {
+    setSearchQuery(brand)
+    setShowSuggestions(false)
+    setTimeout(() => {
+      searchAds()
+    }, 100)
+  }
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchInputRef.current && !searchInputRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false)
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
 
   if (loading) {
@@ -94,16 +154,52 @@ export default function AdsPage() {
         
         {/* Search Bar */}
         <div className="flex gap-3 max-w-2xl">
-          <div className="relative flex-1">
+          <div className="relative flex-1" ref={searchInputRef}>
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
               placeholder="Search by company name (e.g., Nike, Caesars Palace)"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => handleInputChange(e.target.value)}
               onKeyPress={handleKeyPress}
+              onFocus={() => {
+                if (searchQuery.trim() && suggestions.length > 0) {
+                  setShowSuggestions(true)
+                }
+              }}
               className="pl-10"
             />
+            
+            {/* Autocomplete Dropdown */}
+            {showSuggestions && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-md shadow-lg z-50 max-h-64 overflow-auto">
+                {suggestions.map((brand, index) => {
+                  const highlightMatch = (text: string) => {
+                    const regex = new RegExp(`(${searchQuery})`, 'gi')
+                    const parts = text.split(regex)
+                    
+                    return parts.map((part, i) => 
+                      regex.test(part) ? (
+                        <span key={i} className="font-semibold text-blue-600">{part}</span>
+                      ) : (
+                        <span key={i}>{part}</span>
+                      )
+                    )
+                  }
+                  
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => selectSuggestion(brand)}
+                      className="w-full px-4 py-2 text-left hover:bg-gray-100 focus:bg-gray-100 focus:outline-none flex items-center gap-2"
+                    >
+                      <Search className="h-3 w-3 text-gray-400" />
+                      <span className="text-sm">{highlightMatch(brand)}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
           </div>
           <Button 
             onClick={searchAds} 
