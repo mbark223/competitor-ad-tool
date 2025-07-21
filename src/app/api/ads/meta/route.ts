@@ -5,18 +5,38 @@ import { prisma } from "@/lib/database/prisma"
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
-    const competitorPageNames = searchParams.get("pages")?.split(",") || []
+    const pages = searchParams.get("pages")?.split(",") || []
     const limit = parseInt(searchParams.get("limit") || "50")
 
-    if (competitorPageNames.length === 0) {
+    if (pages.length === 0) {
       return NextResponse.json(
-        { error: "At least one competitor page name is required" },
+        { error: "At least one page name or ID is required" },
         { status: 400 }
       )
     }
 
     const metaAPI = new MetaAdLibraryAPI()
-    const ads = await metaAPI.getCompetitorAds(competitorPageNames, limit)
+    let allAds: any[] = []
+
+    // Try each page - could be either name or ID
+    for (const page of pages) {
+      try {
+        let ads
+        // Check if it's a page ID (numeric) or page name
+        if (/^\d+$/.test(page)) {
+          // It's a page ID
+          ads = await metaAPI.getAdsByPageId(page, limit)
+        } else {
+          // It's a page name
+          ads = await metaAPI.getAdsByPageName(page, limit)
+        }
+        allAds = allAds.concat(ads)
+      } catch (error) {
+        console.error(`Failed to fetch ads for ${page}:`, error)
+      }
+    }
+
+    const ads = allAds
 
     // Store ads in database
     for (const ad of ads) {

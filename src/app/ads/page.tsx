@@ -22,8 +22,9 @@ interface MetaAd {
   metadata?: any
 }
 
-// Popular brands on Meta platforms
+// Popular brands on Meta platforms with some known page IDs
 const POPULAR_BRANDS = [
+  // Brand names
   "Nike", "Adidas", "Apple", "Samsung", "Coca-Cola", "Pepsi",
   "McDonald's", "Burger King", "KFC", "Subway", "Starbucks",
   "Amazon", "Walmart", "Target", "Best Buy", "Home Depot",
@@ -36,7 +37,17 @@ const POPULAR_BRANDS = [
   "Visa", "Mastercard", "PayPal", "Square", "Stripe",
   "Louis Vuitton", "Gucci", "Chanel", "Hermès", "Prada",
   "Zara", "H&M", "Uniqlo", "Gap", "Forever 21",
-  "Sephora", "Ulta", "MAC Cosmetics", "Maybelline", "L'Oréal"
+  "Sephora", "Ulta", "MAC Cosmetics", "Maybelline", "L'Oréal",
+  // Known page IDs (you can search by ID too)
+  "110153984122778", // Example from your URL
+  "112832955092185", // Example from your URL
+  "104434518645098", // Example from your URL
+  "100611842366213", // Example from your URL
+  "108897755612137", // Caesars
+  "7270241753", // Nike
+  "182162001806727", // Adidas
+  "20531316728", // Facebook (Meta)
+  "279377918756817" // Walmart
 ]
 
 export default function AdsPage() {
@@ -158,7 +169,7 @@ export default function AdsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Search by company name (e.g., Nike, Caesars Palace)"
+              placeholder="Search by company name or page ID (e.g., Nike, 110153984122778)"
               value={searchQuery}
               onChange={(e) => handleInputChange(e.target.value)}
               onKeyPress={handleKeyPress}
