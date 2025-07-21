@@ -29,31 +29,13 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
           </div>
           
           <nav className="space-y-2 p-4">
-            <Link href="/dashboard">
+            <Link href="/ads">
               <Button 
-                variant={pathname === "/dashboard" ? "default" : "ghost"} 
+                variant={pathname === "/ads" ? "default" : "ghost"} 
                 className="w-full justify-start"
               >
-                <BarChart3 className="mr-2 h-4 w-4" />
-                Dashboard
-              </Button>
-            </Link>
-            <Link href="/competitors">
-              <Button 
-                variant={pathname.startsWith("/competitors") ? "default" : "ghost"} 
-                className="w-full justify-start"
-              >
-                <Search className="mr-2 h-4 w-4" />
-                Company Lookup
-              </Button>
-            </Link>
-            <Link href="/search">
-              <Button 
-                variant={pathname === "/search" ? "default" : "ghost"} 
-                className="w-full justify-start"
-              >
-                <Search className="mr-2 h-4 w-4" />
-                Search Intelligence
+                <Eye className="mr-2 h-4 w-4" />
+                Meta Ad Library
               </Button>
             </Link>
           </nav>
@@ -94,40 +76,13 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
         </div>
         
         <nav className="space-y-2 p-4">
-          <Link href="/dashboard">
-            <Button 
-              variant={pathname === "/dashboard" ? "default" : "ghost"} 
-              className="w-full justify-start"
-            >
-              <BarChart3 className="mr-2 h-4 w-4" />
-              Dashboard
-            </Button>
-          </Link>
-          <Link href="/competitors">
-            <Button 
-              variant={pathname.startsWith("/competitors") ? "default" : "ghost"} 
-              className="w-full justify-start"
-            >
-              <Search className="mr-2 h-4 w-4" />
-              Company Lookup
-            </Button>
-          </Link>
           <Link href="/ads">
             <Button 
               variant={pathname === "/ads" ? "default" : "ghost"} 
               className="w-full justify-start"
             >
               <Eye className="mr-2 h-4 w-4" />
-              Ad Explorer
-            </Button>
-          </Link>
-          <Link href="/search">
-            <Button 
-              variant={pathname === "/search" ? "default" : "ghost"} 
-              className="w-full justify-start"
-            >
-              <Search className="mr-2 h-4 w-4" />
-              Search Intelligence
+              Meta Ad Library
             </Button>
           </Link>
         </nav>
