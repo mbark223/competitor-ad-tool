@@ -16,6 +16,19 @@ export async function GET(request: NextRequest) {
     }
 
     const metaAPI = new MetaAdLibraryAPI()
+    
+    // Check if access token is configured
+    if (!process.env.META_ACCESS_TOKEN) {
+      return NextResponse.json(
+        { 
+          error: "Meta API not configured",
+          message: "META_ACCESS_TOKEN is required to fetch ads from Meta Ad Library. Please configure it in your .env file.",
+          ads: []
+        },
+        { status: 503 }
+      )
+    }
+    
     let allAds: any[] = []
 
     // Try each page - could be either name or ID

@@ -43,6 +43,7 @@ const POPULAR_BRANDS = [
   "112832955092185", // Example from your URL
   "104434518645098", // Example from your URL
   "100611842366213", // Example from your URL
+  "211972722156574", // DraftKings
   "108897755612137", // Caesars
   "7270241753", // Nike
   "182162001806727", // Adidas
@@ -69,11 +70,15 @@ export default function AdsPage() {
     try {
       const response = await fetch(`/api/ads/meta?pages=${encodeURIComponent(searchQuery)}&limit=50`)
       
-      if (!response.ok) {
-        throw new Error("Failed to search ads")
-      }
-      
       const data = await response.json()
+      
+      if (!response.ok) {
+        if (response.status === 503 && data.error === "Meta API not configured") {
+          // Show configuration error
+          alert("Meta Ad Library API is not configured. Please add META_ACCESS_TOKEN to your .env file to fetch real ads.")
+        }
+        throw new Error(data.error || "Failed to search ads")
+      }
       
       if (data.ads && data.ads.length > 0) {
         setAds(data.ads)
