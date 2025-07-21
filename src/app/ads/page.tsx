@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Download, Grid, List, Search, Loader2 } from "lucide-react"
+import { Download, Grid, List, Search, Loader2, ExternalLink } from "lucide-react"
 import Image from "next/image"
 
 interface MetaAd {
@@ -74,8 +74,22 @@ export default function AdsPage() {
       
       if (!response.ok) {
         if (response.status === 503 && data.error === "Meta API not configured") {
-          // Show configuration error
-          alert("Meta Ad Library API is not configured. Please add META_ACCESS_TOKEN to your .env file to fetch real ads.")
+          // Offer alternative: open in Facebook Ad Library
+          const confirmed = confirm(
+            "Meta API is not configured. Would you like to view the ads directly on Facebook Ad Library instead?"
+          )
+          
+          if (confirmed) {
+            let fbUrl
+            if (/^\d+$/.test(searchQuery)) {
+              // It's a page ID
+              fbUrl = `https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ALL&is_targeted_country=false&media_type=all&search_type=page&view_all_page_id=${searchQuery}`
+            } else {
+              // It's a search term
+              fbUrl = `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=ALL&q=${encodeURIComponent(searchQuery)}`
+            }
+            window.open(fbUrl, "_blank")
+          }
         }
         throw new Error(data.error || "Failed to search ads")
       }
@@ -232,13 +246,29 @@ export default function AdsPage() {
 
       {/* Results */}
       {searchedCompany && (
-        <div className="mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
             {ads.length > 0 
               ? `Showing ${ads.length} ads for "${searchedCompany}"`
               : `No ads found for "${searchedCompany}"`
             }
           </p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              let fbUrl
+              if (/^\d+$/.test(searchedCompany)) {
+                fbUrl = `https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ALL&is_targeted_country=false&media_type=all&search_type=page&view_all_page_id=${searchedCompany}`
+              } else {
+                fbUrl = `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=ALL&q=${encodeURIComponent(searchedCompany)}`
+              }
+              window.open(fbUrl, "_blank")
+            }}
+          >
+            <ExternalLink className="mr-2 h-4 w-4" />
+            View on Facebook
+          </Button>
         </div>
       )}
 
