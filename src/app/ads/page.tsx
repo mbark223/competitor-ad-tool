@@ -4,105 +4,68 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Download, Grid, List } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Download, Grid, List, Search, Loader2 } from "lucide-react"
 import Image from "next/image"
 
-interface SimpleAd {
+interface MetaAd {
   id: string
-  competitorName: string
+  competitorId: string
+  competitorName?: string
   platform: string
   creativeUrl: string
+  text?: string
   dateFound: string
-  estimatedReach: number
+  estimatedReach?: number
   format: string
   isActive: boolean
+  metadata?: any
 }
 
 export default function AdsPage() {
-  const [ads, setAds] = useState<SimpleAd[]>([])
-  const [loading, setLoading] = useState(true)
+  const [ads, setAds] = useState<MetaAd[]>([])
+  const [loading, setLoading] = useState(false)
+  const [searching, setSearching] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [searchedCompany, setSearchedCompany] = useState("")
 
-  useEffect(() => {
-    const fetchAds = async () => {
-      try {
-        const mockAds: SimpleAd[] = [
-          {
-            id: "1",
-            competitorName: "Caesars Palace",
-            platform: "meta",
-            creativeUrl: "https://picsum.photos/400/300?random=1",
-            dateFound: "2 hours ago",
-            estimatedReach: 15000,
-            format: "image",
-            isActive: true
-          },
-          {
-            id: "2",
-            competitorName: "DraftKings",
-            platform: "twitter",
-            creativeUrl: "https://picsum.photos/400/300?random=2",
-            dateFound: "4 hours ago",
-            estimatedReach: 8500,
-            format: "image",
-            isActive: true
-          },
-          {
-            id: "3",
-            competitorName: "FanDuel",
-            platform: "snapchat",
-            creativeUrl: "https://picsum.photos/400/600?random=3",
-            dateFound: "6 hours ago",
-            estimatedReach: 12000,
-            format: "video",
-            isActive: true
-          },
-          {
-            id: "4",
-            competitorName: "BetMGM",
-            platform: "meta",
-            creativeUrl: "https://picsum.photos/800/400?random=4",
-            dateFound: "8 hours ago",
-            estimatedReach: 25000,
-            format: "carousel",
-            isActive: false
-          },
-          {
-            id: "5",
-            competitorName: "Nike",
-            platform: "google_search",
-            creativeUrl: "https://picsum.photos/400/200?random=5",
-            dateFound: "12 hours ago",
-            estimatedReach: 18000,
-            format: "text",
-            isActive: true
-          }
-        ]
-        
-        setAds(mockAds)
-      } catch (error) {
-        console.error("Failed to fetch ads:", error)
-      } finally {
-        setLoading(false)
+  const searchAds = async () => {
+    if (!searchQuery.trim()) return
+    
+    setSearching(true)
+    setAds([])
+    
+    try {
+      const response = await fetch(`/api/ads/meta?pages=${encodeURIComponent(searchQuery)}&limit=50`)
+      
+      if (!response.ok) {
+        throw new Error("Failed to search ads")
       }
-    }
-
-    fetchAds()
-  }, [])
-
-  const getPlatformColor = (platform: string) => {
-    switch (platform) {
-      case "meta":
-        return "bg-blue-100 text-blue-800"
-      case "twitter":
-        return "bg-sky-100 text-sky-800"
-      case "snapchat":
-        return "bg-yellow-100 text-yellow-800"
-      case "google_search":
-        return "bg-green-100 text-green-800"
-      default:
-        return "bg-gray-100 text-gray-800"
+      
+      const data = await response.json()
+      
+      if (data.ads && data.ads.length > 0) {
+        setAds(data.ads)
+        setSearchedCompany(searchQuery)
+      } else {
+        // No ads found
+        setAds([])
+        setSearchedCompany(searchQuery)
+      }
+    } catch (error) {
+      console.error("Failed to search ads:", error)
+      setAds([])
+    } finally {
+      setSearching(false)
     }
   }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      searchAds()
+    }
+  }
+
 
   if (loading) {
     return (
@@ -121,73 +84,136 @@ export default function AdsPage() {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Meta Ad Library</h1>
           <p className="text-muted-foreground">
             Browse and analyze Facebook & Instagram ads
           </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline">
-            <Download className="mr-2 h-4 w-4" />
-            Export
-          </Button>
-          <div className="flex rounded-lg border">
-            <Button variant="default" size="sm" className="rounded-r-none">
-              <Grid className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm" className="rounded-l-none">
-              <List className="h-4 w-4" />
-            </Button>
+        
+        {/* Search Bar */}
+        <div className="flex gap-3 max-w-2xl">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search by company name (e.g., Nike, Caesars Palace)"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={handleKeyPress}
+              className="pl-10"
+            />
           </div>
+          <Button 
+            onClick={searchAds} 
+            disabled={searching || !searchQuery.trim()}
+          >
+            {searching ? (
+              <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Searching...</>
+            ) : (
+              "Search"
+            )}
+          </Button>
         </div>
       </div>
 
-      <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
-          Showing {ads.length} ads
-        </p>
+      {/* Results */}
+      {searchedCompany && (
+        <div className="mb-4">
+          <p className="text-sm text-muted-foreground">
+            {ads.length > 0 
+              ? `Showing ${ads.length} ads for "${searchedCompany}"`
+              : `No ads found for "${searchedCompany}"`
+            }
+          </p>
+        </div>
+      )}
+
+      {/* Ad Grid - Masonry Style */}
+      <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
+        {ads.map((ad) => {
+          const formatDate = (dateString: string) => {
+            try {
+              const date = new Date(dateString)
+              return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric' 
+              })
+            } catch {
+              return dateString
+            }
+          }
+
+          return (
+            <div 
+              key={ad.id} 
+              className="break-inside-avoid group cursor-pointer"
+            >
+              <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
+                {/* Ad Creative */}
+                <div className="relative bg-gray-100">
+                  {ad.creativeUrl ? (
+                    <img
+                      src={ad.creativeUrl}
+                      alt="Ad creative"
+                      className="w-full h-auto"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.src = `https://placehold.co/400x600/f3f4f6/9ca3af?text=${encodeURIComponent(ad.competitorName || ad.competitorId)}`
+                      }}
+                    />
+                  ) : (
+                    <div className="aspect-[4/5] bg-gray-100 flex items-center justify-center">
+                      <span className="text-gray-400">No preview available</span>
+                    </div>
+                  )}
+                  
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity duration-200" />
+                </div>
+                
+                {/* Ad Info */}
+                <div className="p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium truncate">
+                      {ad.competitorName || ad.competitorId}
+                    </span>
+                    <Badge 
+                      variant={ad.isActive ? "default" : "secondary"}
+                      className="text-xs"
+                    >
+                      {ad.isActive ? "Active" : "Inactive"}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Live since {formatDate(ad.dateFound)}
+                  </p>
+                  {ad.text && (
+                    <p className="text-xs text-gray-600 mt-2 line-clamp-2">
+                      {ad.text}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )
+        })}
       </div>
-
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {ads.map((ad) => (
-          <Card key={ad.id} className="flex flex-col h-full">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <Badge className={getPlatformColor(ad.platform)}>
-                  {ad.platform}
-                </Badge>
-                <span className="text-xs text-muted-foreground">
-                  {ad.competitorName}
-                </span>
-              </div>
-            </CardHeader>
-
-            <CardContent className="flex-1">
-              <div className="relative aspect-video mb-4 bg-muted rounded-lg overflow-hidden">
-                <Image
-                  src={ad.creativeUrl}
-                  alt="Ad creative"
-                  fill
-                  className="object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement
-                    target.src = `https://placehold.co/400x300/cccccc/666666?text=${encodeURIComponent(ad.competitorName)}`
-                  }}
-                />
-              </div>
-
-              <div className="space-y-2 text-xs text-muted-foreground">
-                <div>Found {ad.dateFound}</div>
-                <div>Estimated reach: {ad.estimatedReach.toLocaleString()}</div>
-                <div>Format: {ad.format}</div>
-                <div>Status: {ad.isActive ? "Active" : "Inactive"}</div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      
+      {/* Empty State */}
+      {!searchedCompany && !loading && (
+        <div className="text-center py-12">
+          <Search className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Search for a company
+          </h3>
+          <p className="text-gray-500">
+            Enter a company name above to see their Facebook and Instagram ads
+          </p>
+        </div>
+      )}
     </div>
   )
 }
